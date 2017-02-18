@@ -25213,44 +25213,58 @@
 	var openWeatherMap = __webpack_require__(221);
 
 	var Weather = React.createClass({
-	  displayName: 'Weather',
+		displayName: 'Weather',
 
-	  getInitialState: function getInitialState() {
-	    return {
-	      location: 'Miami',
-	      temp: 88
-	    };
-	  },
-	  handleSearch: function handleSearch(location) {
-	    var that = this;
+		getInitialState: function getInitialState() {
+			return {
+				isLoading: false
+			};
+		},
+		handleSearch: function handleSearch(location) {
+			var that = this;
 
-	    openWeatherMap.getTemp(location).then(function (temp) {
-	      that.setState({
-	        location: location,
-	        temp: temp
-	      });
-	    }, function (errorMessage) {
-	      alert(errorMessage);
-	    });
-	  },
-	  render: function render() {
-	    var _state = this.state,
-	        temp = _state.temp,
-	        location = _state.location;
+			this.setState({ isLoading: true });
+
+			openWeatherMap.getTemp(location).then(function (temp) {
+				that.setState({
+					location: location,
+					temp: temp,
+					isLoading: false
+				});
+			}, function (errorMessage) {
+				alert(errorMessage);
+			});
+		},
+		render: function render() {
+			var _state = this.state,
+			    isLoading = _state.isLoading,
+			    temp = _state.temp,
+			    location = _state.location;
 
 
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'h3',
-	        null,
-	        'Weather Component'
-	      ),
-	      React.createElement(WeatherForm, { onSearch: this.handleSearch }),
-	      React.createElement(WeatherMessage, { temp: temp, location: location })
-	    );
-	  }
+			function renderMessage() {
+				if (isLoading) {
+					return React.createElement(
+						'h3',
+						null,
+						'Fetching weather ...'
+					);
+				} else if (temp && location) {
+					return React.createElement(WeatherMessage, { temp: temp, location: location });
+				}
+			}
+			return React.createElement(
+				'div',
+				null,
+				React.createElement(
+					'h3',
+					null,
+					'Weather Component'
+				),
+				React.createElement(WeatherForm, { onSearch: this.handleSearch }),
+				renderMessage()
+			);
+		}
 	});
 
 	module.exports = Weather;
@@ -25264,34 +25278,34 @@
 	var React = __webpack_require__(1);
 
 	var WeatherForm = React.createClass({
-	  displayName: 'WeatherForm',
+		displayName: 'WeatherForm',
 
-	  onFormSubmit: function onFormSubmit(e) {
-	    e.preventDefault();
+		onFormSubmit: function onFormSubmit(e) {
+			e.preventDefault();
 
-	    var location = this.refs.location.value;
+			var location = this.refs.location.value;
 
-	    if (location.length > 0) {
-	      this.refs.location.value = '';
-	      this.props.onSearch(location);
-	    }
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'form',
-	        { onSubmit: this.onFormSubmit },
-	        React.createElement('input', { type: 'text', ref: 'location' }),
-	        React.createElement(
-	          'button',
-	          null,
-	          'Get Weather'
-	        )
-	      )
-	    );
-	  }
+			if (location.length > 0) {
+				this.refs.location.value = '';
+				this.props.onSearch(location);
+			}
+		},
+		render: function render() {
+			return React.createElement(
+				'div',
+				null,
+				React.createElement(
+					'form',
+					{ onSubmit: this.onFormSubmit },
+					React.createElement('input', { type: 'text', ref: 'location' }),
+					React.createElement(
+						'button',
+						null,
+						'Get Weather'
+					)
+				)
+			);
+		}
 	});
 
 	module.exports = WeatherForm;
@@ -25305,24 +25319,24 @@
 	var React = __webpack_require__(1);
 
 	var WeatherMessage = React.createClass({
-	  displayName: 'WeatherMessage',
+			displayName: 'WeatherMessage',
 
-	  render: function render() {
-	    var _props = this.props,
-	        temp = _props.temp,
-	        location = _props.location;
+			render: function render() {
+					var _props = this.props,
+					    temp = _props.temp,
+					    location = _props.location;
 
 
-	    return React.createElement(
-	      'h3',
-	      null,
-	      'It\'s it ',
-	      temp,
-	      '*f in ',
-	      location,
-	      '.'
-	    );
-	  }
+					return React.createElement(
+							'h3',
+							null,
+							'It\'s it ',
+							temp,
+							'*f in ',
+							location,
+							'.'
+					);
+			}
 	});
 
 	module.exports = WeatherMessage;
@@ -25344,12 +25358,12 @@
 
 	    return axios.get(requestUrl).then(function (res) {
 	      if (res.data.cod && res.data.message) {
-	        throw new Error(res.data.message);
+	        return res.data.message;
 	      } else {
 	        return res.data.main.temp;
 	      }
 	    }, function (res) {
-	      throw new Error(res.data.message);
+	      return res.data.message;
 	    });
 	  }
 	};
