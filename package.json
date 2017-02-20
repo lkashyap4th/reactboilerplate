@@ -2,9 +2,10 @@
   "name": "reactboilerplate",
   "version": "1.0.0",
   "description": "node with react",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev" : "webpack-dev-server --inline --hot"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +17,7 @@
     "babel-preset-react": "^6.5.0",
     "express": "^4.14.1",
     "react": "^0.14.7",
+    "react-bootstrap": "^0.30.7",
     "react-dom": "^0.14.7",
     "react-router": "^2.0.0",
     "webpack": "^1.12.13"
